@@ -1,6 +1,7 @@
 package com.geekbrains.ru.springmvcdemo.controller;
 
 import com.geekbrains.ru.springmvcdemo.domain.Product;
+import com.geekbrains.ru.springmvcdemo.domain.ProductSearchConditional;
 import com.geekbrains.ru.springmvcdemo.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,9 +18,15 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ModelAndView getProducts() {
+    public ModelAndView getProducts(@RequestParam(required = false) Integer minPrice,
+                                    @RequestParam(required = false) Integer maxPrice) {
         ModelAndView modelAndView = new ModelAndView("product/productList");
-        modelAndView.addObject("products", productService.getProducts());
+
+        ProductSearchConditional searchConditional = new ProductSearchConditional();
+        searchConditional.setMinPrice(minPrice);
+        searchConditional.setMaxPrice(maxPrice);
+
+        modelAndView.addObject("products", productService.getProducts(searchConditional).getContent());
 
         return modelAndView;
     }
